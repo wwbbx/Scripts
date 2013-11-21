@@ -31,7 +31,7 @@ def GetReportDataFolder():
 
 
 def DeleteReportDataOnRemoteServer(serverName):
-    delCommand = r'{0} \\{1} cmd /c del /F "{2}\*.*"'.format(
+    delCommand = r'{0} \\{1} cmd /c del /F /Q "{2}\*.*"'.format(
         GetPsExecCommand(),
         GetRemoteComputerName(),
         GetReportDataFolder())
