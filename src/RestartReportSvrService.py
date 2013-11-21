@@ -8,8 +8,9 @@ import sys
 
 
 def ExecutePsExeccommand(action, serviceName):
-    command = r'{0} "{1}" {2}'.format(
+    command = r'{0} \\{1} "{2}" {3}'.format(
         GetPsExecCommand(),
+        GetRemoteComputerName(),
         netCommand,
         '{0} \"{1}\"'.format(action, serviceName))
 
@@ -22,9 +23,7 @@ def GetRemoteComputerName():
 
 
 def GetPsExecCommand():
-    psExec = r'.\MSTools\psexec.exe'
-
-    return r'{0} \\{1}'.format(psExec, GetRemoteComputerName())
+    return r'.\MSTools\psexec.exe'
 
 
 def GetReportDataFolder():
