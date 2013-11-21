@@ -9,6 +9,9 @@
 import subprocess
 import ServicesList
 
+# need to kill useless processes first.
+
+
 for service in ServicesList.Services:
     command = "net stop \"{0}\"".format(service)
     subprocess.call(command, shell=True)
