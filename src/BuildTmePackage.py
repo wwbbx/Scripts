@@ -27,20 +27,28 @@ def GetVersion():
 
 
 def BuildSetupPackage():
-    devenv = r'C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\devenv.exe'
+    devenv = r'C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\devenv.com'
+    solutionFile = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TmePlatformAgentWin7\TmePlatformAgentWin7.sln')
     setupProject = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TMEPlatformAgentSetup\TMEPlatformAgentSetup.vdproj')
 
     packageFile = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TMEPlatformAgentSetup\Debug\TMEPlatformAgent.msi')
 
     if(os.path.isfile(packageFile)):
+        print("Delete previous built tmePlatformAgentSetup.msi file.")
         subprocess.call("del {0}".format(packageFile), shell=True)
 
-    command = "\"{0}\" \"{1}\" /build Debug".format(devenv, setupProject)
+    command = "\"{0}\" \"{1}\" /Project \"{2}\" /Rebuild Debug".format(devenv, solutionFile, setupProject)
     print(command)
     subprocess.call(command, shell=True)
 
+    # need to give devenv.exe about 30 seconds to finish the building
+
+
     if os.path.isfile(packageFile):
         print('Successfully built {0}!'.format(packageFile))
+        return True
+
+    return False
 
 
 def CopyPackage(version):
@@ -53,7 +61,7 @@ def CopyPackage(version):
     if os.path.isfile(source):
         subprocess.call(command, shell=True)
     else:
-        print("TMEPlatformAgent.msi is not exist. Can't copy.")
+        print("{0} doesn't exists. Can't copy.".format(source))
 
     if os.path.isfile(destination):
         print('Successfully copied {0}!'.format(destination))
@@ -82,6 +90,8 @@ def MoveOldPackage():
             print('Archived {0}.'.format(destinationFile))
 
 version = GetVersion()
-BuildSetupPackage()
-CopyPackage(version)
-MoveOldPackage()
+if BuildSetupPackage():
+    CopyPackage(version)
+    MoveOldPackage()
+else:
+    print("Can't proceed because build is failed.")
