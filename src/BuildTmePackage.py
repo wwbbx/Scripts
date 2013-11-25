@@ -51,11 +51,7 @@ def BuildSetupPackage():
     return False
 
 
-def CopyPackage(version):
-    source = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TMEPlatformAgentSetup\Debug\TMEPlatformAgent.msi')
-
-    destination = os.path.join(GetSharedDirectory(), r'TMEPlatformAgent_{0}.msi'.format(version))
-
+def CopyFile(source, destination):
     command = "copy /Y /V {0} {1}".format(source, destination)
 
     if os.path.isfile(source):
@@ -65,6 +61,20 @@ def CopyPackage(version):
 
     if os.path.isfile(destination):
         print('Successfully copied {0}!'.format(destination))
+
+
+def CopyPackage(version):
+    source = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TMEPlatformAgentSetup\Debug\TMEPlatformAgent.msi')
+    destination = os.path.join(GetSharedDirectory(), r'TMEPlatformAgent_{0}.msi'.format(version))
+
+    CopyFile(source, destination)
+
+
+def CopyReleaseNote():
+    source = os.path.join(GetSvnRoot(), r'Platforms\TME\PlatformAgent\TMEPlatformAgent\ReleaseNote.txt')
+    destination = os.path.join(GetSharedDirectory(), r'ReleaseNote.txt')
+
+    CopyFile(source, destination)
 
 
 def MoveOldPackage():
@@ -92,6 +102,7 @@ def MoveOldPackage():
 version = GetVersion()
 if BuildSetupPackage():
     CopyPackage(version)
+    CopyReleaseNote()
     MoveOldPackage()
 else:
     print("Can't proceed because build is failed.")
